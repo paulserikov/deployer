@@ -8,6 +8,8 @@ PROJECT_PATH=$(pwd)
 echo "Project path is $PROJECT_PATH"
 A=$(basename $PWD)
 # may also be as A=`basename $PWD`
+cd ..
+sudo chmod -R 755 $A
 echo "Project name is $A"
 echo "Reading Apache2.conf..."
 echo "Please edit this file if it is not OK"
@@ -35,10 +37,17 @@ echo "New virtualhost file created succesfully"
 echo "========================================="
 sudo cp $PROJECT_PATH/deploy/$A.local.conf /etc/apache2/sites-available/$A.local.conf
 cd /etc/apache2/sites-available
+sudo chmod a+rx $A.local.conf
 echo "========================================="
 ls -la
 echo "========================================="
 sudo a2ensite $A.local.conf
-sudo echo "127.0.0.1    $A.local" >> "/etc/hosts"
 sudo service apache2 reload
+sudo service apache2 stop
+cd $PROJECT_PATH
+sudo cat /etc/hosts > tmphost
+sudo echo "127.0.0.1 $A.local" >> tmphost
+sudo cp tmphost /etc/hosts
+rm tmphost
+sudo service apache2 start
 firefox $A.local
